@@ -1,13 +1,13 @@
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by ms on 4/16/14.
  */
 public class Customer {
 
-    private String _name;
-    private Vector _rentals = new Vector();
+    private String       _name;
+    private List<Rental> _rentals = new ArrayList<>();
 
 
 
@@ -18,7 +18,7 @@ public class Customer {
 
 
     public void addRental( Rental arg ) {
-        _rentals.addElement( arg );
+        _rentals.add( arg );
     }
 
 
@@ -30,44 +30,50 @@ public class Customer {
 
 
     public String statement() {
-        double totalAmount = 0;
-        int frequentRenterPoints = 0;
-        Enumeration rentals = _rentals.elements();
         String result = "Rental Record for " + getName() + "\n";
-        while ( rentals.hasMoreElements() ) {
-            double thisAmount = 0;
-            Rental each = ( Rental )rentals.nextElement();
-            //determine amounts for each line
-            switch ( each.getMovie().getPriceCode() ) {
-                case Movie.REGULAR:
-                    thisAmount += 2;
-                    if ( each.getDaysRented() > 2 ) {
-                        thisAmount += ( each.getDaysRented() - 2 ) * 1.5;
-                    }
-                    break;
-                case Movie.NEW_RELEASE:
-                    thisAmount += each.getDaysRented() * 3;
-                    break;
-                case Movie.CHILDRENS:
-                    thisAmount += 1.5;
-                    if ( each.getDaysRented() > 3 ) {
-                        thisAmount += ( each.getDaysRented() - 3 ) + 1.5;
-                    }
-                    break;
-            }
-            //add frequent renter points
-            frequentRenterPoints++;
-            //add bonus for a two day new release rental
-            if ( ( each.getMovie().getPriceCode() == Movie.NEW_RELEASE ) && each.getDaysRented() > 1 ) {
-                frequentRenterPoints++;
-            }
+        for ( Rental rental : _rentals ) {
             //show figures for this rental
-            result += "\t" + each.getMovie().getTitle() + "\t" + String.valueOf( thisAmount ) + "\n";
-            totalAmount += thisAmount;
+            result += "\t" + rental.getMovie().getTitle() + "\t" + String.valueOf( rental.getCharge() ) + "\n";
         }
         //add foooter lines
-        result += "Amount owed is " + String.valueOf( totalAmount ) + "\n";
-        result += "You earned " + String.valueOf( frequentRenterPoints ) + " frequent renter points";
+        result += "Amount owed is " + String.valueOf( getTotalCharge() ) + "\n";
+        result += "You earned " + String.valueOf( getTotalFrequentRenterPoints() ) + " frequent renter points";
         return result;
     }
+
+
+
+    public String htmlStatement() {
+        String result = "<H1>Rentals for <EM>" + getName() + "</EM></H1><P>\n";
+        for ( Rental rental : _rentals ) {
+            //show figures for each rental
+            result += rental.getMovie().getTitle() + ": " + String.valueOf( rental.getCharge() ) + "</BR>\n";
+        }
+        //add footer lines
+        result += "<P>You owe <EM>" + String.valueOf( getTotalCharge() ) + ">/EM></P>\n";
+        result += "On this rental you earned <EM>" + String
+                .valueOf( getTotalFrequentRenterPoints() ) + "</EM> frequent renter points</P>";
+        return result;
+    }
+
+
+
+    private double getTotalCharge() {
+        double result = 0;
+        for ( Rental rental : _rentals ) {
+            result += rental.getCharge();
+        }
+        return result;
+    }
+
+
+
+    private int getTotalFrequentRenterPoints() {
+        int result = 0;
+        for ( Rental rental : _rentals ) {
+            result += rental.getFrequentRenterPoints();
+        }
+        return result;
+    }
+
 }

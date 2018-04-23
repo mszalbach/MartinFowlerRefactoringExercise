@@ -10,8 +10,9 @@ public class CustomerTest {
 
     @Test
     public void testCustomer() {
-        Movie legoMovie = new Movie( "The Lego Movie", Movie.CHILDRENS );
-        Movie watchmenMovie = new Movie( "Watchmen", Movie.REGULAR );
+        Movie legoMovie = new Movie( "The Lego Movie", new ChildrensPrice() );
+        Movie watchmenMovie = new Movie( "Watchmen", new RegularPrice() );
+
 
         Customer customer = new Customer( "Test" );
         customer.addRental( new Rental( legoMovie, 2 ) );
