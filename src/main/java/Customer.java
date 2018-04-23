@@ -59,21 +59,13 @@ public class Customer {
 
 
     private double getTotalCharge() {
-        double result = 0;
-        for ( Rental rental : _rentals ) {
-            result += rental.getCharge();
-        }
-        return result;
+        return _rentals.stream().mapToDouble( Rental::getCharge ).sum();
     }
 
 
 
     private int getTotalFrequentRenterPoints() {
-        int result = 0;
-        for ( Rental rental : _rentals ) {
-            result += rental.getFrequentRenterPoints();
-        }
-        return result;
+        return _rentals.stream().mapToInt( Rental::getFrequentRenterPoints ).sum();
     }
 
 }
